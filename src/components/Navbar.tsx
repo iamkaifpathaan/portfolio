@@ -16,9 +16,27 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Closing the mobile menu triggers a layout-shrinking exit animation at the
+  // same instant the browser tries to run the anchor's native hash-scroll —
+  // that race can cancel the scroll entirely on some engines. Doing the
+  // scroll ourselves, decoupled from the menu-close render, avoids it.
+  const goToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    history.pushState(null, "", `#${id}`);
+    setOpen(false);
+    // Let the menu-close render commit and paint first, so it can't collide
+    // with (and get cancelled by) the smooth-scroll animation we're about
+    // to start.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  };
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 [overflow-anchor:none] transition-all duration-300 ${
         scrolled ? "py-2" : "py-4"
       }`}
     >
@@ -45,6 +63,7 @@ export default function Navbar() {
               <a
                 key={link.id}
                 href={`#${link.id}`}
+                onClick={goToSection(link.id)}
                 className="group flex items-center gap-1.5 rounded-md px-3 py-2 font-mono text-xs tracking-wider text-muted transition-colors hover:text-primary"
               >
                 <span className="text-[10px] text-primary-dim group-hover:text-primary">
@@ -87,7 +106,7 @@ export default function Navbar() {
                   <a
                     key={link.id}
                     href={`#${link.id}`}
-                    onClick={() => setOpen(false)}
+                    onClick={goToSection(link.id)}
                     className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-muted hover:bg-panel hover:text-primary"
                   >
                     <span className="text-[10px] text-primary-dim">{link.tag}</span>

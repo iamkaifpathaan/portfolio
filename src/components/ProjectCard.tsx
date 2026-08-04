@@ -1,20 +1,42 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight, Users } from "lucide-react";
 import type { Project } from "@/lib/data";
 import { GithubGlyph } from "./icons";
+import { useFinePointer } from "@/lib/useFinePointer";
 
 export default function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const isFinePointer = useFinePointer();
+
   const mx = useMotionValue(0.5);
   const my = useMotionValue(0.5);
-
-  const rotateX = useSpring(useTransform(my, [0, 1], [8, -8]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(mx, [0, 1], [-8, 8]), { stiffness: 200, damping: 20 });
+  const mouseRotateX = useSpring(useTransform(my, [0, 1], [8, -8]), {
+    stiffness: 200,
+    damping: 20,
+  });
+  const mouseRotateY = useSpring(useTransform(mx, [0, 1], [-8, 8]), {
+    stiffness: 200,
+    damping: 20,
+  });
   const glareX = useTransform(mx, [0, 1], ["0%", "100%"]);
   const glareY = useTransform(my, [0, 1], ["0%", "100%"]);
+
+  // No cursor on touch devices — drive the same 3D tilt from scroll position instead.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const scrollRotateX = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [7, 0, -7]), {
+    stiffness: 60,
+    damping: 20,
+  });
+  const scrollRotateY = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [-5, 0, 5]), {
+    stiffness: 60,
+    damping: 20,
+  });
+
+  const rotateX = isFinePointer ? mouseRotateX : scrollRotateX;
+  const rotateY = isFinePointer ? mouseRotateY : scrollRotateY;
 
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = ref.current?.getBoundingClientRect();
@@ -31,8 +53,8 @@ export default function ProjectCard({ project, index }: { project: Project; inde
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={reset}
+      onMouseMove={isFinePointer ? handleMove : undefined}
+      onMouseLeave={isFinePointer ? reset : undefined}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -60px 0px" }}
