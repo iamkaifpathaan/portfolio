@@ -72,7 +72,7 @@ export default function Preloader() {
               />
             </div>
             <div className="mt-2 flex justify-between text-[10px] text-muted tracking-widest">
-              <span>MD_KAIF.PORTFOLIO</span>
+              <span>MD_KAIF.ELECTRO</span>
               <span>{Math.floor(progress)}%</span>
             </div>
           </div>

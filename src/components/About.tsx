@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GraduationCap, MapPin } from "lucide-react";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
@@ -16,6 +17,25 @@ export default function About() {
         <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-5">
           <Reveal delay={0.1} className="lg:col-span-2">
             <div className="solder-corner rounded-xl border border-line bg-panel/60 p-6 backdrop-blur-sm">
+              <div className="solder-corner relative mb-6 aspect-[4/5] overflow-hidden rounded-lg border border-line-hi bg-bg-soft">
+                <Image
+                  src={profile.photoDesk}
+                  alt={profile.name}
+                  fill
+                  sizes="(max-width: 1024px) 90vw, 360px"
+                  className="object-cover"
+                  priority
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-70" />
+                <div className="pointer-events-none absolute inset-0 bg-grid opacity-20 mix-blend-overlay" />
+                <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-line-hi bg-bg/70 px-2 py-1 font-mono text-[10px] tracking-widest text-primary backdrop-blur">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-slow" />
+                  ONLINE
+                </div>
+                <div className="absolute bottom-3 left-3 rounded-md border border-line-hi bg-bg/70 px-2.5 py-1 font-mono text-[11px] text-text backdrop-blur">
+                  MD_KAIF<span className="text-primary">.</span>ELECTRO
+                </div>
+              </div>
               <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-muted">
                 <MapPin size={13} className="text-primary" />
                 {profile.location}

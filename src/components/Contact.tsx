@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Mail, Phone, Download, ArrowUpRight } from "lucide-react";
 import SectionHeading from "./SectionHeading";
@@ -18,7 +19,26 @@ export default function Contact() {
   return (
     <section id="contact" className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionHeading tag="U6" title="Close the Circuit" align="center" />
+        <Reveal className="flex justify-center">
+          <div className="relative h-20 w-20 shrink-0 rounded-full border-2 border-primary/70 p-1 border-glow">
+            <div className="relative h-full w-full overflow-hidden rounded-full bg-bg-soft">
+              <Image
+                src={profile.photoAvatar}
+                alt={profile.name}
+                fill
+                sizes="80px"
+                className="object-cover"
+              />
+            </div>
+            <span className="absolute -right-0.5 -bottom-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-bg bg-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-bg" />
+            </span>
+          </div>
+        </Reveal>
+
+        <div className="mt-4">
+          <SectionHeading tag="U6" title="Close the Circuit" align="center" />
+        </div>
 
         <Reveal delay={0.1} className="mt-6 text-center">
           <p className="mx-auto max-w-xl text-muted">

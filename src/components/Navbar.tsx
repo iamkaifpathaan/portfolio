@@ -36,7 +36,7 @@ export default function Navbar() {
               <span className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-primary animate-pulse-slow" />
             </span>
             <span className="hidden sm:block font-mono text-xs tracking-widest text-muted">
-              MD_KAIF<span className="text-primary">.</span>DEV
+              MD_KAIF<span className="text-primary">.</span>ELECTRO
             </span>
           </a>
 

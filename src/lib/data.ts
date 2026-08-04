@@ -16,6 +16,8 @@ export const profile = {
   summary:
     "Electronics & Communication Engineering undergraduate with hands-on experience in embedded systems, PCB design, and IoT product development. Skilled in ESP32-based firmware and KiCad schematic/PCB layout, with a track record of taking hardware projects from concept to working prototype. Internship experience spans IoT engineering at IBM and applied research at Kantar, complemented by full-stack web development delivered for a live client project.",
   resumeUrl: "/Md_Kaif_Resume.pdf",
+  photoDesk: "/profile-desk.jpg",
+  photoAvatar: "/profile-avatar.jpg",
   socials: {
     github: "https://github.com/iamkaifpathaan",
     linkedin: "https://linkedin.com/in/iamkaifpathaan",
@@ -267,20 +269,34 @@ export const certificates = [
   {
     id: "kantar-cert",
     title: "Certificate of Internship — Research Analyst Intern",
-    issuer: "NeoResearch in collaboration with Kantar",
-    year: "2026",
+    issuer: "NeoResearch, in collaboration with Kantar",
+    meta: "Cert No. NEO/2026/RA/55",
+    year: "May 2026",
+    url: null,
   },
   {
-    id: "ibm-cert",
-    title: "Virtual Internship — IoT (IBMCEP)",
-    issuer: "IBM Developer Skills Network",
-    year: "2025",
+    id: "ibm-fsp-cert",
+    title: "Virtual Internship via FSP (6 Sept – 7 Nov 2025) — IoT",
+    issuer: "IBMCEP · IBM Developer Skills Network",
+    meta: "Verify certificate",
+    year: "Dec 2025",
+    url: "https://courses.ibmmooc.skillsnetwork.site/certificates/12ee70e998f54563b148421dfd3ccd47",
+  },
+  {
+    id: "ibm-pbel-cert",
+    title: "PBEL Equivalent to Virtual Internship — IoT",
+    issuer: "IBMCEP · IBM Developer Skills Network",
+    meta: "Verify certificate",
+    year: "Aug 2025",
+    url: "https://courses.ibmmooc.skillsnetwork.site/certificates/23179c7d83394a758e8509749c758e55",
   },
   {
     id: "cisco-cert",
     title: "Introduction to IoT and Digital Transformation",
     issuer: "Cisco Networking Academy (EdCreate Foundation)",
-    year: "2025",
+    meta: "View certificate",
+    year: "Jul 2025",
+    url: "/certificates/cisco-iot-digital-transformation-2025.pdf",
   },
 ];
 
