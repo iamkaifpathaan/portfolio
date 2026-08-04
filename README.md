@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Md Kaif — Portfolio
+
+A super-responsive, animated portfolio for **Md Kaif** — Electronics & Communication Engineer, PCB/embedded systems designer, and creative technologist. The design theme is built around a PCB / circuit-board aesthetic: a 3D animated chip in the hero, silkscreen-style reference designators (`U0`, `R1`, `C1`...) as section labels, glowing traces, and a boot-sequence preloader.
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router) + TypeScript
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Framer Motion](https://motion.dev) for scroll reveals and micro-interactions
+- [React Three Fiber](https://r3f.docs.pmnd.rs) + [drei](https://github.com/pmndrs/drei) + postprocessing (Bloom) for the animated 3D chip in the hero
+- [lucide-react](https://lucide.dev) for icons
+
+## Structure
+
+- `src/lib/data.ts` — all portfolio content (profile, experience, projects, skills, certificates, hobbies). Edit this file to update the site's content without touching components.
+- `src/components/` — one component per section (`Hero`, `About`, `Experience`, `Projects`, `Skills`, `Certificates`, `Hobbies`, `Contact`), plus shared pieces (`Navbar`, `Footer`, `CircuitBackground`, `Preloader`, `Scene3D`, `Reveal`, `SectionHeading`).
+- `public/Md_Kaif_Resume.pdf` — resume served for the "Download Resume" buttons. Replace this file to update the downloadable resume.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+npm run start
+```
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Push this repo to GitHub and [import it on Vercel](https://vercel.com/new) — no extra configuration needed, it's a standard Next.js app.
