@@ -1,132 +1,187 @@
 "use client";
 
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Download } from "lucide-react";
-import { navLinks, profile } from "@/lib/data";
+import { nav, profile } from "@/lib/content";
+import { EASE, Magnetic } from "./motion";
+import { getLenis } from "./SmoothScroll";
+import LocalTime from "./LocalTime";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    setScrolled(y > 24);
+    setHidden(y > 240 && y > prev && !open);
+  });
+
+  // Close the menu on navigation, and freeze the page behind it while open.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Closing the mobile menu triggers a layout-shrinking exit animation at the
-  // same instant the browser tries to run the anchor's native hash-scroll —
-  // that race can cancel the scroll entirely on some engines. Doing the
-  // scroll ourselves, decoupled from the menu-close render, avoids it.
-  const goToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    history.pushState(null, "", `#${id}`);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- route change closes the menu
     setOpen(false);
-    // Let the menu-close render commit and paint first, so it can't collide
-    // with (and get cancelled by) the smooth-scroll animation we're about
-    // to start.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
-  };
+  }, [pathname]);
+  useEffect(() => {
+    const lenis = getLenis();
+    if (open) {
+      lenis?.stop();
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      lenis?.start();
+      document.documentElement.style.overflow = "";
+    }
+  }, [open]);
+
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 [overflow-anchor:none] transition-all duration-300 ${
-        scrolled ? "py-2" : "py-4"
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+    <>
+      <motion.header
+        className="fixed inset-x-0 top-0 z-50"
+        style={{ viewTransitionName: "site-header" }}
+        animate={{ y: hidden ? "-110%" : "0%" }}
+        transition={{ duration: 0.6, ease: EASE }}
+      >
         <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-2.5 backdrop-blur-xl transition-all duration-300 ${
-            scrolled
-              ? "border-line-hi bg-bg-soft/80 border-glow"
-              : "border-transparent bg-bg-soft/30"
+          className={`transition-[background-color,border-color,backdrop-filter] duration-500 ${
+            scrolled && !open ? "border-b border-line bg-bg/70 backdrop-blur-xl" : "border-b border-transparent"
           }`}
         >
-          <a href="#top" className="flex items-center gap-2.5 group">
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-md border border-line-hi bg-panel font-mono text-sm font-bold text-primary group-hover:animate-flicker">
-              {profile.initials}
-              <span className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-primary animate-pulse-slow" />
-            </span>
-            <span className="hidden sm:block font-mono text-xs tracking-widest text-muted">
-              MD_KAIF<span className="text-primary">.</span>ELECTRO
-            </span>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={`#${link.id}`}
-                onClick={goToSection(link.id)}
-                className="group flex items-center gap-1.5 rounded-md px-3 py-2 font-mono text-xs tracking-wider text-muted transition-colors hover:text-primary"
-              >
-                <span className="text-[10px] text-primary-dim group-hover:text-primary">
-                  {link.tag}
+          <div className="shell flex h-[72px] items-center justify-between gap-6">
+            <Link href="/" className="group relative z-10 flex items-center gap-3" aria-label="Md Kaif — home">
+              <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-line-2 bg-surface text-[13px] font-semibold tracking-tight">
+                <span className="transition-transform duration-500 ease-out-expo group-hover:-translate-y-8">MK</span>
+                <span className="serif absolute translate-y-8 text-[17px] text-accent transition-transform duration-500 ease-out-expo group-hover:translate-y-0">
+                  k
                 </span>
-                {link.label}
-              </a>
-            ))}
-          </nav>
+              </span>
+              <span className="hidden text-[15px] font-medium tracking-tight sm:block">
+                Md Kaif<span className="text-dim">, engineer</span>
+              </span>
+            </Link>
 
-          <div className="flex items-center gap-2">
-            <a
-              href={profile.resumeUrl}
-              download
-              className="hidden sm:inline-flex items-center gap-2 rounded-md border border-line-hi bg-panel px-3 py-2 font-mono text-xs text-primary transition-all hover:border-glow hover:bg-panel-hi"
-            >
-              <Download size={13} />
-              RESUME
-            </a>
-            <button
-              aria-label="Toggle menu"
-              onClick={() => setOpen((o) => !o)}
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-line-hi bg-panel text-primary md:hidden"
-            >
-              {open ? <X size={16} /> : <Menu size={16} />}
-            </button>
+            <nav className="hidden md:block" aria-label="Main">
+              <ul className="flex items-center gap-1 rounded-full border border-line bg-surface/60 p-1 backdrop-blur-xl">
+                {nav.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <li key={item.href} className="relative">
+                      {active ? (
+                        <motion.span
+                          layoutId="nav-pill"
+                          className="absolute inset-0 rounded-full bg-text"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        />
+                      ) : null}
+                      <Link
+                        href={item.href}
+                        className={`relative block rounded-full px-5 py-2 text-[14px] transition-colors duration-300 ${
+                          active ? "text-bg" : "text-muted hover:text-text"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <div className="flex items-center gap-5">
+              <span className="hidden font-mono text-[11px] uppercase tracking-[0.16em] text-muted lg:block">
+                <LocalTime /> IST
+              </span>
+              <Magnetic className="hidden md:inline-block">
+                <a
+                  href={profile.resume}
+                  target="_blank"
+                  rel="noopener"
+                  className="group inline-flex items-center gap-2 rounded-full border border-line-2 px-5 py-2.5 text-[14px] transition-colors duration-300 hover:border-text hover:bg-text hover:text-bg"
+                >
+                  Résumé
+                  <span className="transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
+                </a>
+              </Magnetic>
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                className="relative z-10 grid h-11 w-11 place-items-center rounded-full border border-line-2 bg-surface/70 backdrop-blur md:hidden"
+                aria-expanded={open}
+                aria-controls="mobile-menu"
+                aria-label={open ? "Close menu" : "Open menu"}
+              >
+                <span className="relative block h-3 w-5">
+                  <span
+                    className={`absolute left-0 h-px w-5 bg-text transition-all duration-500 ease-out-expo ${
+                      open ? "top-1.5 rotate-45" : "top-0"
+                    }`}
+                  />
+                  <span
+                    className={`absolute left-0 h-px w-5 bg-text transition-all duration-500 ease-out-expo ${
+                      open ? "top-1.5 -rotate-45" : "top-3"
+                    }`}
+                  />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
+      </motion.header>
 
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden md:hidden"
-            >
-              <div className="mt-2 flex flex-col gap-1 rounded-xl border border-line-hi bg-bg-soft/95 p-3 backdrop-blur-xl">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.id}
-                    href={`#${link.id}`}
-                    onClick={goToSection(link.id)}
-                    className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-muted hover:bg-panel hover:text-primary"
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            id="mobile-menu"
+            className="fixed inset-0 z-40 flex flex-col bg-bg md:hidden"
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{ clipPath: "inset(0 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.8, ease: EASE }}
+          >
+            <nav className="shell flex flex-1 flex-col justify-center gap-2 pt-20" aria-label="Mobile">
+              {[{ href: "/", label: "Home" }, ...nav].map((item, i) => (
+                <div key={item.href} className="overflow-hidden">
+                  <motion.div
+                    initial={{ y: "100%" }}
+                    animate={{ y: "0%" }}
+                    exit={{ y: "100%" }}
+                    transition={{ duration: 0.8, ease: EASE, delay: 0.15 + i * 0.06 }}
                   >
-                    <span className="text-[10px] text-primary-dim">{link.tag}</span>
-                    {link.label}
-                  </a>
-                ))}
-                <a
-                  href={profile.resumeUrl}
-                  download
-                  onClick={() => setOpen(false)}
-                  className="mt-1 flex items-center justify-center gap-2 rounded-md border border-line-hi bg-panel px-3 py-2.5 font-mono text-sm text-primary"
-                >
-                  <Download size={14} />
-                  DOWNLOAD RESUME
-                </a>
-              </div>
+                    <Link
+                      href={item.href}
+                      className="flex items-baseline gap-4 py-1 text-[15vw] font-medium leading-[1] tracking-[-0.05em]"
+                    >
+                      <span className="font-mono text-xs tracking-normal text-dim">0{i + 1}</span>
+                      <span className={isActive(item.href) || (item.href === "/" && pathname === "/") ? "serif text-accent" : ""}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  </motion.div>
+                </div>
+              ))}
+            </nav>
+            <motion.div
+              className="shell flex items-end justify-between pb-10 text-sm text-muted"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { delay: 0.5 } }}
+              exit={{ opacity: 0 }}
+            >
+              <a href={`mailto:${profile.email}`} className="link-draw">
+                {profile.email}
+              </a>
+              <a href={profile.resume} target="_blank" rel="noopener" className="link-draw">
+                Résumé ↗
+              </a>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </header>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </>
   );
 }

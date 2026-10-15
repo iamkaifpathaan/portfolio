@@ -1,72 +1,71 @@
-import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono, Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import Cursor from "@/components/Cursor";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import SmoothScroll from "@/components/SmoothScroll";
+import { profile } from "@/lib/content";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
+  style: ["normal", "italic"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const siteUrl = "https://kaifpathaan.vercel.app";
+const title = "Md Kaif — Electronics Engineer & Product Builder";
+const description =
+  "Md Kaif builds the whole thing: PCBs and ESP32 firmware, desktop and web apps, and code-driven motion graphics. Founder of Pabloch Tech, creator of Electronica, L1 QA Engineer at OPPO.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: "Md Kaif — Embedded Systems & PCB Design Engineer",
-  description:
-    "Md Kaif — Electronics & Communication Engineer specializing in ESP32 firmware, KiCad PCB design and IoT product development. Also a video editor, content creator, and prompt engineer.",
+  metadataBase: new URL(profile.site),
+  title: { default: title, template: "%s — Md Kaif" },
+  description,
   keywords: [
     "Md Kaif",
+    "iamkaifpathaan",
+    "Electronics Engineer",
     "PCB Design",
-    "Embedded Systems",
     "ESP32",
-    "KiCad",
-    "IoT Engineer",
-    "Electronics Engineer Portfolio",
-    "Firmware Developer",
+    "Embedded Systems",
+    "Full-stack Developer",
+    "Pabloch Tech",
+    "Electronica",
+    "Renewal Tracker",
   ],
-  authors: [{ name: "Md Kaif", url: "https://github.com/iamkaifpathaan" }],
+  authors: [{ name: "Md Kaif", url: profile.socials.github }],
   creator: "Md Kaif",
-  icons: {
-    icon: "/favicon.svg",
-  },
-  openGraph: {
-    title: "Md Kaif — Embedded Systems & PCB Design Engineer",
-    description:
-      "Portfolio of Md Kaif — ESP32 firmware, KiCad PCB design, IoT products, and full-stack builds.",
-    url: siteUrl,
-    siteName: "Md Kaif",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Md Kaif — Embedded Systems & PCB Design Engineer",
-    description:
-      "Portfolio of Md Kaif — ESP32 firmware, KiCad PCB design, IoT products, and full-stack builds.",
-    creator: "@iamkaifpathaan",
-  },
+  icons: { icon: "/favicon.svg" },
+  openGraph: { title, description, url: profile.site, siteName: "Md Kaif", type: "website" },
+  twitter: { card: "summary_large_image", title, description, creator: "@iamkaifpathaan" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0b",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-bg text-text selection:bg-primary">
-        {children}
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${instrumentSerif.variable}`}>
+      <body className="flex min-h-svh flex-col">
+        <a
+          href="#main"
+          className="fixed left-4 top-4 z-[80] -translate-y-20 rounded-full bg-text px-4 py-2 text-sm text-bg transition-transform focus:translate-y-0"
+        >
+          Skip to content
+        </a>
+        <SmoothScroll />
+        <Navbar />
+        <main id="main" className="relative flex-1">
+          {children}
+        </main>
+        <Footer />
+        <Cursor />
+        <div className="grain" aria-hidden="true" />
       </body>
     </html>
   );
